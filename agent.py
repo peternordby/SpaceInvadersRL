@@ -28,22 +28,30 @@ class Agent:
         dqn = DQNAgent(model=self.build_model(), 
                        memory=memory, 
                        policy=policy, 
-                       nb_actions=4, 
-                       nb_steps_warmup=100, 
+                       enable_dueling_network=True,
+                       dueling_type='avg',
+                       nb_actions=4,
+                       nb_steps_warmup=1000,
                        target_model_update=1e-2)
         return dqn
     
     def train(self):
         dqn = self.build_agent()
-        dqn.compile(Adam(lr=1e-3))
+        dqn.compile(Adam(learning_rate=1e-3))
         dqn.fit(self.env, nb_steps=10000, visualize=False, verbose=2)
         dqn.save_weights('dqn_weights.h5f', overwrite=True)
         return dqn
 
     def test(self):
         dqn = self.train()
-        scores = dqn.test(self.env, nb_episodes=3, visualize=False)
+        scores = dqn.test(self.env, nb_episodes=5, visualize=False)
         print(np.mean(scores.history['episode_reward']))
+
+    def load(self):
+        dqn = self.build_agent()
+        dqn.compile(Adam(learning_rate=1e-3))
+        dqn.load_weights('dqn_weights.h5f')
+        return dqn
 
 if __name__ == "__main__":
     agent = Agent()
