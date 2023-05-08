@@ -36,7 +36,7 @@ class Agent:
     def train(self):
         dqn = self.build_agent()
         dqn.compile(Adam(lr=1e-3))
-        dqn.fit(self.env, nb_steps=1000, visualize=False, verbose=2)
+        dqn.fit(self.env, nb_steps=10000, visualize=False, verbose=2)
         dqn.save_weights('dqn_weights.h5f', overwrite=True)
         return dqn
 
